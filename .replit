@@ -30,3 +30,7 @@ run = ["sh", "-c", "npm install && npx prisma generate && npx prisma db push && 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 44975
+externalPort = 3000
