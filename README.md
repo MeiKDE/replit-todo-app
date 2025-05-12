@@ -50,10 +50,21 @@ yarn install
 
 #### Option 1: Local PostgreSQL
 
-1. Create a PostgreSQL database on your local machine:
+1. Create a PostgreSQL database on your local machine.
+
+   If you have the PostgreSQL command-line tools installed, you can use:
    ```bash
    createdb nextjs_todo_app
    ```
+   
+   Alternatively, you can create a database using:
+   - pgAdmin (PostgreSQL's graphical interface)
+   - PostgreSQL interactive terminal (psql):
+     ```bash
+     psql -U postgres
+     postgres=# CREATE DATABASE nextjs_todo_app;
+     postgres=# \q
+     ```
 
 2. Create a `.env` file in the root directory with your database connection string:
    ```
