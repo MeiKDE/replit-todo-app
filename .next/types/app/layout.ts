@@ -1,4 +1,4 @@
-// File: /home/runner/workspace/src/app/layout.tsx
+// File: /Users/mei/projects/React_Practice_Projects/replit-todo-app/src/app/layout.tsx
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
