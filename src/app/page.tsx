@@ -33,7 +33,7 @@ const HomePage = () => {
     setError(""); // Clear previous error
 
     try {
-      const response = await fetch("/api/todos"); // Send GET request to API
+      const response = await fetch("/api/todos"); // Send GET request as default to API
 
       if (!response.ok) {
         const errorData = await response.json();
