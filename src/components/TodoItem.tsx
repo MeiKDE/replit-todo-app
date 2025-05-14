@@ -9,14 +9,10 @@ interface TodoItemProps {
     todoUpdateInput: TodoUpdateInput
   ) => Promise<void>;
   handleDeleteTodo: (id: number) => Promise<void>;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
-  title: string;
-  description: string;
   error: string;
 }
 
@@ -24,14 +20,10 @@ const TodoItem = ({
   todo,
   handleUpdateTodo,
   handleDeleteTodo,
-  setTitle,
-  setDescription,
   setError,
   setTodos,
   setIsLoading,
   isLoading,
-  title,
-  description,
   error,
 }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -42,13 +34,9 @@ const TodoItem = ({
         <EditForm
           onUpdate={handleUpdateTodo}
           onDelete={handleDeleteTodo}
-          setTitle={setTitle}
-          setDescription={setDescription}
           setError={setError}
           setIsLoading={setIsLoading}
           setIsEditing={setIsEditing}
-          title={title}
-          description={description}
           isLoading={isLoading}
           error={error}
           todo={todo}
@@ -91,11 +79,7 @@ const TodoItem = ({
           <div className="mt-2 space-x-2">
             <button
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => {
-                setTitle(todo.title);
-                setDescription(todo.description || "");
-                setIsEditing(true);
-              }}
+              onClick={() => setIsEditing(true)}
               disabled={isLoading}
             >
               Edit

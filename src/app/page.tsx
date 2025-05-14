@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useState, useEffect } from "react";
 import { Todo, TodoInput, TodoUpdateInput } from "@/types";
 import TodoForm from "@/components/TodoForm";
@@ -64,7 +65,7 @@ const HomePage = () => {
 
       const newTodo = await response.json();
       console.log("New todo created:", newTodo);
-      setTodos((prev) => [...prev, newTodo]); //prepend to the list
+      setTodos((prev) => [newTodo, ...prev]); //prepend to the list
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "An unexpected error has occurred";
@@ -72,6 +73,8 @@ const HomePage = () => {
       setError(errorMessage);
     } finally {
       setIsLoading(false);
+      setTitle("");
+      setDescription("");
     }
   };
 
@@ -159,13 +162,9 @@ const HomePage = () => {
         todos={todos}
         handleUpdateTodo={handleUpdateTodo}
         handleDeleteTodo={handleDeleteTodo}
-        setTitle={setTitle}
-        setDescription={setDescription}
         setError={setError}
         setTodos={setTodos}
         setIsLoading={setIsLoading}
-        title={title}
-        description={description}
         isLoading={isLoading}
         error={error}
       />
