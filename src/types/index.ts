@@ -1,3 +1,5 @@
+/*Use interface for component props and object shapes.*/
+
 // Defines the full structure of a Todo item as stored in the system (e.g. database)
 export interface Todo {
   id: number; // Unique identifier for the todo item
@@ -7,6 +9,9 @@ export interface Todo {
   createdAt: Date; // Timestamp when the todo was created
   updatedAt: Date; // Timestamp when the todo was last updated
 }
+
+/* Use type for union types, aliases, and complex compositions.
+ */
 
 // Defines the shape of data used to create a new todo (e.g. from a form)
 export type TodoInput = {

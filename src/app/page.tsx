@@ -1,67 +1,60 @@
-// Marks this component as a client-side component (required for hooks like useState/useEffect in Next.js App Router)
 "use client";
-
-// React hooks for state and side effects
 import { useState, useEffect } from "react";
-
-// Type definitions for todos and input types
 import { Todo, TodoInput, TodoUpdateInput } from "@/types";
+import TodoForm from "@/components/TodoForm";
+import TodoList from "@/components/TodoList";
 
-// UI components for the form and the todo list
-import { TodoList } from "@/components/TodoList";
-import { TodoForm } from "@/components/TodoForm";
-
-// Define the main HomePage component
 const HomePage = () => {
-  // State for the list of todos
   const [todos, setTodos] = useState<Todo[]>([]);
-
-  // State to indicate if data is still loading
   const [isLoading, setIsLoading] = useState(true);
-
-  // State to hold any error message
   const [error, setError] = useState("");
 
-  // Fetch todos once when the component mounts
+  // Create useStates for Todo Fields
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
+  // Grab data when this component mounts
   useEffect(() => {
-    fetchTodos();
+    handleGetData();
   }, []);
 
-  // Fetch todos from the API
-  const fetchTodos = async () => {
-    setIsLoading(true); // Set loading state to true
-    setError(""); // Clear previous error
+  //Setup CRUD (create (POST), read (GET), update (PUT/PATCH), delete (DELETE)) calls to the API
+
+  // Read (GET) - Get is default, to read extract all data.
+  const handleGetData = async () => {
+    setIsLoading(true);
+    setError("");
 
     try {
-      const response = await fetch("/api/todos"); // Send GET request as default to API
-
+      const response = await fetch("/api/todos");
+      //validate for HTTP errors
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch todos");
+        throw new Error(errorData.error || "Failed to get/fetch todos");
       }
 
-      const data = await response.json(); // Parse JSON response
-      setTodos(data); // Update todo list in state
+      const data = await response.json();
+      setTodos(data);
     } catch (err) {
-      // Handle both expected and unexpected errors in one place
+      // Validate for Run-time errors
       const errorMessage =
-        err instanceof Error ? err.message : "An unexpected error occurred";
-      console.error("Error fetching todos:", err);
+        err instanceof Error ? err.message : "An unexpected error has occurred";
+      console.error("Error get/fetching todos", err);
       setError(errorMessage);
     } finally {
-      setIsLoading(false); // Stop loading regardless of success/failure
+      setIsLoading(false);
     }
   };
 
-  // Handle creation of a new todo
-  const handleAddTodo = async (todoInput: TodoInput) => {
+  // Create (POST) a new todo
+  const handleCreateTodo = async (todoInput: TodoInput) => {
+    setIsLoading(true);
+    setError("");
     try {
       const response = await fetch("/api/todos", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(todoInput), // Send todo input as JSON
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(todoInput),
       });
 
       if (!response.ok) {
@@ -69,19 +62,23 @@ const HomePage = () => {
         throw new Error(errorData.error || "Failed to create todo");
       }
 
-      const newTodo = await response.json(); // Get created todo
-      setTodos((prevTodos) => [newTodo, ...prevTodos]); // Prepend to list
+      const newTodo = await response.json();
+      console.log("New todo created:", newTodo);
+      setTodos((prev) => [...prev, newTodo]); //prepend to the list
     } catch (err) {
-      // Handle both expected and unexpected errors in one place
       const errorMessage =
-        err instanceof Error ? err.message : "An unexpected error occurred";
-      console.error("Error adding todo:", err);
+        err instanceof Error ? err.message : "An unexpected error has occurred";
+      console.error("Failed to create todo", err);
       setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle updating an existing todo
+  // Update (PUT/PATCH) an existing todo
   const handleUpdateTodo = async (id: number, data: TodoUpdateInput) => {
+    setIsLoading(true);
+    setError("");
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: "PUT",
@@ -95,9 +92,9 @@ const HomePage = () => {
       }
 
       const updatedTodo = await response.json();
-      // Replace updated todo in state
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
+      //Replace updated todo in state
+      setTodos((prev) =>
+        prev.map((todo) => (todo.id === id ? updatedTodo : todo))
       );
     } catch (err) {
       // Handle both expected and unexpected errors in one place
@@ -105,11 +102,15 @@ const HomePage = () => {
         err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error updating todo:", err);
       setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle deleting a todo
+  // Delete (DELETE) a todo
   const handleDeleteTodo = async (id: number) => {
+    setIsLoading(true);
+    setError("");
     try {
       const response = await fetch(`/api/todos/${id}`, {
         method: "DELETE",
@@ -121,45 +122,54 @@ const HomePage = () => {
       }
 
       // Remove deleted todo from state
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      setTodos((prev) => prev.filter((todo) => todo.id !== id));
     } catch (err) {
       // Handle both expected and unexpected errors in one place
       const errorMessage =
         err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error deleting todo:", err);
       setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // UI rendering
   return (
-    <>
+    <div
+      id="container"
+      className={`flex flex-row gap-8 p-4 ${isLoading ? "opacity-60" : ""}`}
+    >
       {/* Error message display */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div>
           <p>{error}</p>
-          <button onClick={fetchTodos} className="underline mt-2 text-red-800">
-            Try Again
-          </button>
+          <button onClick={handleGetData}>Try Again</button>
         </div>
       )}
 
-      {/* Grid layout: Form on the left, Todo list on the right (on medium+ screens) */}
-      <div className="grid md:grid-cols-2 gap-8">
-        <div>
-          <TodoForm onSubmit={handleAddTodo} /> {/* Add new todo */}
-        </div>
-
-        <div>
-          <TodoList
-            todos={todos}
-            isLoading={isLoading}
-            onUpdate={handleUpdateTodo}
-            onDelete={handleDeleteTodo}
-          />
-        </div>
-      </div>
-    </>
+      <TodoForm
+        handleCreateTodo={handleCreateTodo}
+        setTitle={setTitle}
+        setDescription={setDescription}
+        title={title}
+        description={description}
+      />
+      <TodoList
+        todos={todos}
+        handleUpdateTodo={handleUpdateTodo}
+        handleDeleteTodo={handleDeleteTodo}
+        setTitle={setTitle}
+        setDescription={setDescription}
+        setError={setError}
+        setTodos={setTodos}
+        setIsLoading={setIsLoading}
+        title={title}
+        description={description}
+        isLoading={isLoading}
+        error={error}
+      />
+    </div>
   );
 };
 
