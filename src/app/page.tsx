@@ -36,14 +36,18 @@ const HomePage = () => {
       const response = await fetch("/api/todos"); // Send GET request to API
 
       if (!response.ok) {
-        throw new Error("Failed to fetch todos"); // Handle non-2xx response
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch todos");
       }
 
       const data = await response.json(); // Parse JSON response
       setTodos(data); // Update todo list in state
     } catch (err) {
+      // Handle both expected and unexpected errors in one place
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error fetching todos:", err);
-      setError("Failed to load todos. Please try refreshing the page.");
+      setError(errorMessage);
     } finally {
       setIsLoading(false); // Stop loading regardless of success/failure
     }
@@ -68,8 +72,11 @@ const HomePage = () => {
       const newTodo = await response.json(); // Get created todo
       setTodos((prevTodos) => [newTodo, ...prevTodos]); // Prepend to list
     } catch (err) {
+      // Handle both expected and unexpected errors in one place
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error adding todo:", err);
-      throw err; // Re-throw so form can handle/display error
+      setError(errorMessage);
     }
   };
 
@@ -93,8 +100,11 @@ const HomePage = () => {
         prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
       );
     } catch (err) {
+      // Handle both expected and unexpected errors in one place
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error updating todo:", err);
-      throw err;
+      setError(errorMessage);
     }
   };
 
@@ -113,8 +123,11 @@ const HomePage = () => {
       // Remove deleted todo from state
       setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
     } catch (err) {
+      // Handle both expected and unexpected errors in one place
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
       console.error("Error deleting todo:", err);
-      throw err;
+      setError(errorMessage);
     }
   };
 

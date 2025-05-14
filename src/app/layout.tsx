@@ -22,17 +22,15 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Body element with the Inter font applied */}
       <body className={inter.className}>
         {/* Wrapper div for setting background and full height */}
-        <div className="min-h-screen bg-gray-100">
-          {/* Centered content container with padding and max width */}
-          <div className="max-w-4xl mx-auto px-4 py-8">
-            {/* App header */}
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-              Mei's Todo App
-            </h1>
+        {/* Centered content container with padding and max width */}
+        <div className="min-h-screen bg-gray-100 max-w-4xl mx-auto px-4 py-8">
+          {/* App header */}
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+            Mei's Todo App
+          </h1>
 
-            {/* Render the page-specific content passed as children */}
-            {children}
-          </div>
+          {/* Render the page-specific content passed as children such as page.tsx*/}
+          {children}
         </div>
       </body>
     </html>
